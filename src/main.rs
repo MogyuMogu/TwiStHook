@@ -119,14 +119,14 @@ fn main() {
         HeaderValue::from_static("application/json"),
     );
     let _task = async {
-        let _mode = from_env("MODE");
-        if let _mode = "post".to_string() {
+        let mode = from_env("MODE");
+        if mode == "post".to_string() {
             post_rules(map).await; 
-        } else if let _mode = "get".to_string() {
+        } else if mode == "get".to_string() {
             get_rules(map).await; 
-        } else if let _mode = "delete".to_string() {
+        } else if mode == "delete".to_string() {
             del_rules(map).await;
-        } else if let _mode = "stream".to_string() {
+        } else if mode == "stream".to_string() {
             filtered_stream(map).await;
         }
     };
