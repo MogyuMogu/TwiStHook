@@ -1,0 +1,15 @@
+[package]
+name = "twwh"
+version = "0.1.0"
+authors = ["MogyuMogu <69337624+MogyuMogu@users.noreply.github.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4.19"
+dotenv = "0.15.0"
+futures-util = "0.3.12"
+json_flex = "0.3.3"
+reqwest = { version = "0.11.0", features = ["stream"] }
+tokio = { version = "1.2.0", features = ["full"] }
