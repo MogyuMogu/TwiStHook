@@ -75,9 +75,9 @@ async fn filtered_stream(map:HeaderMap) {
     while let Some(item) = stream.next().await {
         if let Ok(i) = item {
             let converted: String = String::from_utf8(i.to_vec()).unwrap();
+            println!("Chunk {}: {}", Utc::now().format("%H:%M:%S%.9f").to_string(), converted);
             if converted != "\r\n" {
                 let jf = json_flex::decode(converted);
-                println!("Chunk {}: {:?}", Utc::now().format("%H:%M:%S%.9f").to_string(), jf["data"]["id"]);
                 webhook(format!("https://twitter.com/{}/status/{}"
                 , jf["includes"]["users"][0]["username"].unwrap_string().to_string()
                 , jf["data"]["id"].unwrap_string().to_string()))
