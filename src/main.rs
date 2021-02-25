@@ -3,6 +3,7 @@ use reqwest::header::*;
 use futures_util::StreamExt;
 use chrono::Utc;
 use json_flex;
+use std::env;
 
 fn from_env(name: &str) -> String {
     match std::env::var(name) {
@@ -112,6 +113,7 @@ async fn webhook(content: String) {
 
 fn main() {
     dotenv().ok();
+    let args: Vec<String> = env::args().collect();
     let rt = tokio::runtime::Runtime::new().unwrap();
     let mut map = HeaderMap::new();
     map.insert(
@@ -119,7 +121,7 @@ fn main() {
         HeaderValue::from_static("application/json"),
     );
     let _task = async {
-        let mode = from_env("MODE");
+        let mode = args[1].to_string();
         if mode == "post".to_string() {
             post_rules(map).await; 
         } else if mode == "get".to_string() {
