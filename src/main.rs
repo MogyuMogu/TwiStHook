@@ -97,11 +97,11 @@ async fn webhook(content: String) {
         CONTENT_TYPE,
         HeaderValue::from_static("application/json"),
     );
-    let params = [("content", content)];
+    let body = from_env("FORMAT").replace("twitterURL", &content);
     let response = client.post(&endpoint)
         .headers(header)
         .query(&[("wait", "true")])
-        .form(&params)
+        .body(body)
         .send()
         .await
         .unwrap()
