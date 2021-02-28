@@ -1,6 +1,6 @@
 [package]
-name = "twwh"
-version = "0.1.0"
+name = "twi-st_hook"
+version = "2.0.0"
 authors = ["MogyuMogu <69337624+MogyuMogu@users.noreply.github.com>"]
 edition = "2018"
 
