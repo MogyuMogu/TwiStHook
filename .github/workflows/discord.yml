@@ -1,0 +1,18 @@
+name: Discord
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Discord Commits
+        uses: Sniddl/discord-commits@v1.2
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          message: "**{{ github.context.payload.repository.owner.name }}/{{ github.context.payload.repository.name}}**.\n差分: {{ github.context.payload.compare }}"
+          embed: '{ "title": "{{ commit.title }}", "description": "{{ commit.description }}", "url": "{{ commit.url }}", "author": { "name": "{{ commit.author.name }} ({{ commit.author.username }})", "icon_url": "https://avatars.io/gravatar/{{ commit.author.email }}"} }'
