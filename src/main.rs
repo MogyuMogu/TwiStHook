@@ -31,7 +31,7 @@ async fn post_rules(map: HeaderMap) {
     println!("{}", response);
 }
 
-async fn get_rules(map:HeaderMap) {
+async fn get_rules(map: HeaderMap) {
     let endpoint = "https://api.twitter.com/2/tweets/search/stream/rules";
     let response = reqwest::Client::new()
         .request(reqwest::Method::GET, endpoint)
@@ -46,7 +46,7 @@ async fn get_rules(map:HeaderMap) {
     println!("{}", response);
 }
 
-async fn del_rules(map:HeaderMap) {
+async fn del_rules(map: HeaderMap) {
     let client = reqwest::Client::new();
     let endpoint = "https://api.twitter.com/2/tweets/search/stream/rules";
     let response = client.post(endpoint)
@@ -62,7 +62,7 @@ async fn del_rules(map:HeaderMap) {
     println!("{}", response);
 }
 
-async fn filtered_stream(map:HeaderMap) {
+async fn filtered_stream(map: HeaderMap) {
     let endpoint = "https://api.twitter.com/2/tweets/search/stream";
     let mut stream = reqwest::Client::new()
         .request(reqwest::Method::GET, endpoint)
