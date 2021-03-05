@@ -81,17 +81,17 @@ async fn filtered_stream(map:HeaderMap) {
                 let jf = json_flex::decode(converted);
                 webhook(format!("https://twitter.com/{}/status/{}"
                 , jf["includes"]["users"][0]["username"].unwrap_string().to_string()
-                , jf["data"]["id"].unwrap_string().to_string()))
+                , jf["data"]["id"].unwrap_string().to_string())
+                , from_env("WEBHOOK"))
                 .await;
             }
         }
     }
 }
 
-async fn webhook(content: String) {
-    println!("sending... {}", from_env("WEBHOOK"));
+async fn webhook(content: String, endpoint: String) {
+    println!("sending... {}", endpoint);
     let client = reqwest::Client::new();
-    let endpoint = from_env("WEBHOOK");
     let mut header = HeaderMap::new();
     header.insert(
         CONTENT_TYPE,
