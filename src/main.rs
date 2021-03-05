@@ -130,6 +130,8 @@ fn main() {
             del_rules(map).await;
         } else if mode == "stream".to_string() {
             filtered_stream(map).await;
+        } else if mode == "test".to_string() {
+            webhook("https://twitter.com".to_string(), from_env("TEST_WEBHOOK")).await;
         }
     };
     rt.block_on(_task);
