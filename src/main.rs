@@ -16,9 +16,14 @@ fn from_env(name: &str) -> String {
     }
 }
 
-async fn post_rules(map: HeaderMap) {
+async fn post_rules() {
     let client = reqwest::Client::new();
     let endpoint = "https://api.twitter.com/2/tweets/search/stream/rules";
+    let mut map = HeaderMap::new();
+    map.insert(
+        CONTENT_TYPE,
+        HeaderValue::from_static("application/json"),
+    );
     let response = client.post(endpoint)
         .bearer_auth(from_env("BEARER_TOKEN"))
         .headers(map)
@@ -87,8 +92,13 @@ async fn del_all() {
     del_rules(delete_body).await;
 }
 
-async fn filtered_stream(map: HeaderMap) {
+async fn filtered_stream() {
     let endpoint = "https://api.twitter.com/2/tweets/search/stream";
+    let mut map = HeaderMap::new();
+    map.insert(
+        CONTENT_TYPE,
+        HeaderValue::from_static("application/json"),
+    );
     let mut stream = reqwest::Client::new()
         .request(reqwest::Method::GET, endpoint)
         .bearer_auth(from_env("BEARER_TOKEN"))
@@ -148,7 +158,7 @@ fn main() {
     let _task = async {
         let mode = args[1].to_string();
         if mode == "post".to_string() {
-            post_rules(map).await; 
+            post_rules().await; 
         } else if mode == "get".to_string() {
             get_rules().await; 
         } else if mode == "delete".to_string() {
@@ -156,7 +166,7 @@ fn main() {
         } else if mode == "delall".to_string() {
             del_all().await;
         } else if mode == "stream".to_string() {
-            filtered_stream(map).await;
+            filtered_stream().await;
         } else if mode == "test".to_string() {
             webhook("https://twitter.com".to_string(), from_env("TEST_WEBHOOK")).await;
         }
