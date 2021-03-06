@@ -4,6 +4,7 @@ use futures_util::StreamExt;
 use chrono::Utc;
 use json_flex;
 use std::env;
+use regex::Regex;
 
 fn from_env(name: &str) -> String {
     match std::env::var(name) {
@@ -31,8 +32,13 @@ async fn post_rules(map: HeaderMap) {
     println!("{}", response);
 }
 
-async fn get_rules(map: HeaderMap) {
+async fn get_rules() -> String {
     let endpoint = "https://api.twitter.com/2/tweets/search/stream/rules";
+    let mut map = HeaderMap::new();
+    map.insert(
+        CONTENT_TYPE,
+        HeaderValue::from_static("application/json"),
+    );
     let response = reqwest::Client::new()
         .request(reqwest::Method::GET, endpoint)
         .bearer_auth(from_env("BEARER_TOKEN"))
@@ -44,15 +50,21 @@ async fn get_rules(map: HeaderMap) {
         .await
         .unwrap();
     println!("{}", response);
+    response
 }
 
-async fn del_rules(map: HeaderMap) {
+async fn del_rules(delete_body: String) {
     let client = reqwest::Client::new();
     let endpoint = "https://api.twitter.com/2/tweets/search/stream/rules";
+    let mut map = HeaderMap::new();
+    map.insert(
+        CONTENT_TYPE,
+        HeaderValue::from_static("application/json"),
+    );
     let response = client.post(endpoint)
         .bearer_auth(from_env("BEARER_TOKEN"))
         .headers(map)
-        .body(from_env("DELETE"))
+        .body(delete_body)
         .send()
         .await
         .unwrap()
@@ -60,6 +72,19 @@ async fn del_rules(map: HeaderMap) {
         .await
         .unwrap();
     println!("{}", response);
+}
+
+async fn del_all() {
+    let re = Regex::new(r#""id":("\d{19}",)"#).unwrap();
+    let current_rules = get_rules().await;
+    let regids = re.captures_iter(&current_rules);
+    let mut delete_body = r#"{"delete":{"ids":["#.to_string();
+    for id in regids {
+        delete_body.push_str(&id[1]);
+    }
+    delete_body.pop();
+    delete_body.push_str("]}}");
+    del_rules(delete_body).await;
 }
 
 async fn filtered_stream(map: HeaderMap) {
@@ -125,9 +150,11 @@ fn main() {
         if mode == "post".to_string() {
             post_rules(map).await; 
         } else if mode == "get".to_string() {
-            get_rules(map).await; 
+            get_rules().await; 
         } else if mode == "delete".to_string() {
-            del_rules(map).await;
+            del_rules(from_env("DELETE")).await;
+        } else if mode == "delall".to_string() {
+            del_all().await;
         } else if mode == "stream".to_string() {
             filtered_stream(map).await;
         } else if mode == "test".to_string() {
