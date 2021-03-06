@@ -1,6 +1,6 @@
 [package]
-name = "twi-st_hook"
-version = "2.1.0"
+name = "twisthook"
+version = "2.2.0"
 authors = ["MogyuMogu <69337624+MogyuMogu@users.noreply.github.com>"]
 edition = "2018"
 
@@ -11,5 +11,6 @@ chrono = "0.4.19"
 dotenv = "0.15.0"
 futures-util = "0.3.13"
 json_flex = "0.3.3"
+regex = "1.4.3"
 reqwest = { version = "0.11.1", features = ["stream"] }
 tokio = { version = "1.2.0", features = ["full"] }
