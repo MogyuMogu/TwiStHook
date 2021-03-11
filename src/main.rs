@@ -16,6 +16,12 @@ fn from_env(name: &str) -> String {
     }
 }
 
+async fn run() {
+    del_all().await;
+    post_rules().await;
+    filtered_stream().await;
+}
+
 async fn post_rules() {
     let client = reqwest::Client::new();
     let endpoint = "https://api.twitter.com/2/tweets/search/stream/rules";
@@ -157,7 +163,9 @@ fn main() {
     );
     let _task = async {
         let mode = args[1].to_string();
-        if mode == "post".to_string() {
+        if mode == "run".to_string() {
+            run().await;
+        } else if mode == "post".to_string() {
             post_rules().await; 
         } else if mode == "get".to_string() {
             get_rules().await; 
