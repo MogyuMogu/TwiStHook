@@ -118,7 +118,12 @@ async fn filtered_stream() {
         if let Ok(i) = item {
             let converted: String = String::from_utf8(i.to_vec()).unwrap();
             println!("Chunk {}: {}", Utc::now().format("%H:%M:%S%.9f").to_string(), converted);
-            if converted != "\r\n" {
+            if converted.contains("This stream is currently at the maximum allowed connection limit.") {
+                println!("{}", converted);
+                std::process::exit(1);
+            } else if converted == "\r\n" {
+                // Do Nothing
+            } else if converted.contains(r#"{"data":{""#) {
                 let jf = json_flex::decode(converted);
                 webhook(format!("https://twitter.com/{}/status/{}"
                 , jf["includes"]["users"][0]["username"].unwrap_string().to_string()
