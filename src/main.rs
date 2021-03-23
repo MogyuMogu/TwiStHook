@@ -100,38 +100,47 @@ async fn del_all() {
 
 async fn filtered_stream() {
     let endpoint = "https://api.twitter.com/2/tweets/search/stream";
-    let mut map = HeaderMap::new();
-    map.insert(
-        CONTENT_TYPE,
-        HeaderValue::from_static("application/json"),
-    );
-    let mut stream = reqwest::Client::new()
-        .request(reqwest::Method::GET, endpoint)
-        .bearer_auth(from_env("BEARER_TOKEN"))
-        .headers(map)
-        .query(&[("expansions", "author_id"), ("user.fields", "username")])
-        .send()
-        .await
-        .unwrap()
-        .bytes_stream();
-    while let Some(item) = stream.next().await {
-        if let Ok(i) = item {
-            let converted: String = String::from_utf8(i.to_vec()).unwrap();
-            println!("Chunk {}: {}", Utc::now().format("%H:%M:%S%.9f").to_string(), converted);
-            if converted.contains("This stream is currently at the maximum allowed connection limit.") {
-                println!("{}", converted);
-                std::process::exit(1);
-            } else if converted == "\r\n" {
-                // Do Nothing
-            } else if converted.contains(r#"{"data":{""#) {
-                let jf = json_flex::decode(converted);
-                webhook(format!("https://twitter.com/{}/status/{}"
-                , jf["includes"]["users"][0]["username"].unwrap_string().to_string()
-                , jf["data"]["id"].unwrap_string().to_string())
-                , from_env("WEBHOOK"))
-                .await;
+    let mut connect = true;
+    while connect {
+        println!("stream connected\n{}", Utc::now().format("%H:%M:%S%.9f").to_string());
+        let mut map = HeaderMap::new();
+        map.insert(
+            CONTENT_TYPE,
+            HeaderValue::from_static("application/json"),
+        );
+        let mut stream = reqwest::Client::new()
+            .request(reqwest::Method::GET, endpoint)
+            .bearer_auth(from_env("BEARER_TOKEN"))
+            .headers(map)
+            .query(&[("expansions", "author_id"), ("user.fields", "username")])
+            .send()
+            .await
+            .unwrap()
+            .bytes_stream();
+        while let Some(item) = stream.next().await {
+            if let Ok(i) = item {
+                let converted: String = String::from_utf8(i.to_vec()).unwrap();
+                println!("Chunk {}: {}", Utc::now().format("%H:%M:%S%.9f").to_string(), converted);
+                if converted.contains("This stream is currently at the maximum allowed connection limit.") {
+                    println!("{}", converted);
+                    std::process::exit(1);
+                } else if converted.contains(r#""type":"https://api.twitter.com/2/problems/operational-disconnect"}]}"#){
+                } else if converted == "\r\n" {
+                    // Do Nothing
+                } else if converted.contains(r#"{"data":{""#) {
+                    let jf = json_flex::decode(converted);
+                    webhook(format!("https://twitter.com/{}/status/{}"
+                    , jf["includes"]["users"][0]["username"].unwrap_string().to_string()
+                    , jf["data"]["id"].unwrap_string().to_string())
+                    , from_env("WEBHOOK"))
+                    .await;
+                }
+                else {
+                    connect = false;
+                }
             }
         }
+        println!("stream closed\n{}", Utc::now().format("%H:%M:%S%.9f").to_string());
     }
 }
 
