@@ -1,6 +1,6 @@
 [package]
 name = "twisthook"
-version = "2.2.0"
+version = "2.3.0"
 authors = ["MogyuMogu <69337624+MogyuMogu@users.noreply.github.com>"]
 edition = "2018"
 
