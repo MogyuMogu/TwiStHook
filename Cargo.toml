@@ -1,7 +1,7 @@
 [package]
 name = "twisthook"
 version = "2.3.0"
-authors = ["MogyuMogu <69337624+MogyuMogu@users.noreply.github.com>"]
+authors = ["Mogyuchi <69337624+Mogyuchi@users.noreply.github.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
