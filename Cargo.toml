@@ -1,6 +1,6 @@
 [package]
 name = "twisthook"
-version = "2.4.0"
+version = "2.4.1"
 authors = ["Mogyuchi <69337624+Mogyuchi@users.noreply.github.com>"]
 edition = "2018"
 
@@ -12,5 +12,5 @@ dotenv = "0.15.0"
 futures-util = "0.3.13"
 json_flex = "0.3.3"
 regex = "1.4.3"
-reqwest = { version = "0.11.1", features = ["stream"] }
+reqwest = { version = "0.11.1", features = ["stream", "native-tls-vendored"] }
 tokio = { version = "1.2.0", features = ["full"] }
