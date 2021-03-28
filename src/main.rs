@@ -5,6 +5,7 @@ use chrono::Utc;
 use json_flex;
 use std::env;
 use regex::Regex;
+use tokio::time::{sleep, Duration};
 
 fn from_env(name: &str) -> String {
     match std::env::var(name) {
@@ -141,6 +142,7 @@ async fn filtered_stream() {
             }
         }
         println!("stream closed\n{}", Utc::now().format("%H:%M:%S%.9f").to_string());
+        sleep(Duration::from_millis(2000)).await;
     }
 }
 
