@@ -189,6 +189,9 @@ fn main() {
             del_rules(from_env("DELETE")).await;
         } else if mode == "delall".to_string() {
             del_all().await;
+        } else if mode == "reset".to_string() {
+            del_all().await;
+            post_rules().await;
         } else if mode == "stream".to_string() {
             filtered_stream().await;
         } else if mode == "test".to_string() {
